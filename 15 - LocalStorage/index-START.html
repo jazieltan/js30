@@ -26,9 +26,51 @@
   </div>
 
 <script>
+  /* Event delegation. Using a parent element to listen to an event and delegate / pass the
+  event down to any one of its children that is created dynamically.
+  This is needed when an element is created via Javascript that runs after
+  or when the element itself is unable to listen for events.
+  */
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
-  const items = [];
+  const items = JSON.parse(localStorage.getItem('items')) || [];
+
+function addItem(e){
+  e.preventDefault();
+  const text = (this.querySelector('[name=item]')).value;
+  const item = {
+    text,
+    done: false
+  }
+  // console.log(item);
+  items.push(item);
+  populateList(items, itemsList);
+  localStorage.setItem('items', JSON.stringify(items));
+  this.reset();
+}
+
+function populateList(plates = [], plateList){
+  plateList.innerHTML = plates.map((plate, i) =>{
+    return `
+      <li>
+        <input type="checkbox" data-index="${i}" id="item${i}" ${plate.done ? 'checked': ''}> </input>
+        <label for="item${i}">${plate.text}</label>
+      </li>
+    `;
+  }).join('');
+}
+function tglDone(e){
+  if (!e.target.matches('input')) return; // skip if it's not matching
+  // else
+  const el = e.target;
+  const index = el.dataset.index; //grabs the index of the item in the el array.
+  items[index].done = !items[index].done; //toggles .done (done is boolean in the item obj : addItem(e))
+  localStorage.setItem('items', JSON.stringify(items));
+  populateList(items, itemsList);
+}
+  addItems.addEventListener('submit', addItem)
+  itemsList.addEventListener('click', tglDone)
+  populateList(items, itemsList);
 
 </script>
 

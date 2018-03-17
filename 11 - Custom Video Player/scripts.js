@@ -6,17 +6,14 @@ const progress = player.querySelector(".progress")
 const progressBar = player.querySelector(".progress__filled")
 const skipBtns = player.querySelectorAll("[data-skip]")
 const ranges = player.querySelectorAll(".player__slider")
-// check if all are selected properly. 
+const fsBtn = player.querySelector(".fullscreen")
+// check if all are selected properly.
 // console.log([video, toggle, progress, progressFilled, skipBtns, ranges]);
 
 
 // buld fn
 function togglePlay(){
-    if (video.paused) {
-         video.play();
-    }else{
-        video.pause();
-    }
+    video.pause ? video.play() : video.pause();
 }
 function updateBtn(){
     const icon = this.paused ? '►' : '❚❚';
@@ -30,13 +27,13 @@ function skip() {
 function rangeUpdate() {
     // console.log(video['volume'], this.value);
     video[this.name] = this.value;
-    // video[] is a way to access an array. JavaScript engine will redefine it as an object 
+    // video[] is a way to access an array. JavaScript engine will redefine it as an object
 }
 
 function handleProgress() {
     const percent = (video.currentTime / video.duration) * 100;
     progressBar.style.flexBasis = `${percent}%`;
-    // everything with a - in javascript is converted to cameCase. 
+    // everything with a - in javascript is converted to cameCase.
 }
 
 function seek(e) {
@@ -44,7 +41,19 @@ function seek(e) {
     video.currentTime = seekTime;
     //  console.log(e);
 }
-let mousedown = false; 
+function toggleFs(){
+    (!getFsElm()) ? requestFs().call(player) : exitFs().call(document); //Conditional (ternary) Operator
+}
+// prefixes
+function requestFs(){
+    return player.requestFullscreen || player.webkitRequestFullscreen || player.mozRequestFullScreen || player.msRequestFullscreen;
+}
+function exitFs() {
+    return document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+}
+function getFsElm(){
+     return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+}
 // hook evt listeners
 video.addEventListener("click", togglePlay);
 video.addEventListener('play', updateBtn);
@@ -52,12 +61,11 @@ video.addEventListener('pause', updateBtn);
 video.addEventListener('timeupdate', handleProgress);
 toggle.addEventListener("click", togglePlay);
 skipBtns.forEach(button => button.addEventListener("click", skip));
+fsBtn.addEventListener('click', toggleFs);
 ranges.forEach(range => range.addEventListener("change", rangeUpdate))
 progress.addEventListener('click', seek)
-progress.addEventListener('mousemove', (e) => {
-    if(mousedown){
-        seek(e);
-    }
-})
-progress.addEventListener('mousedown', () => mousedown = true)
-progress.addEventListener('mouseup', () => mousedown = false)
+
+let mousedown = false;
+progress.addEventListener('mousemove', (e) => mousedown && seek(e));
+progress.addEventListener('mousedown', () => mousedown = true);
+window.addEventListener('mouseup', () => mousedown = false); //use document or window to capture mouseup when outside of the player.
