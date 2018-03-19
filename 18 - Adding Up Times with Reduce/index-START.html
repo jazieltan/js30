@@ -182,6 +182,33 @@
     </li>
   </ul>
 <script>
+  // query all the items with a data-time attribute. returns a Node List. use Array.from to convert Nodelist to array.
+  const timeNodes = Array.from(document.querySelectorAll('[data-time]'));
+
+  const seconds = timeNodes
+    .map(node => node.dataset.time)
+    .map(timeCode => {
+      const[mins, secs] =timeCode.split(':')
+      // convert them from strings to number.
+      .map(parseFloat);
+      // Conver mins to secs and SUM total secs
+      return(mins *60) + secs;
+      // console.log(mins, secs);
+    })
+    // Adds up all the seconds
+    .reduce((total, seconds) =>{
+      return total + seconds;
+    })
+
+    // converting the secodns into hours minutes and seconds
+    let secsLeft = seconds; //just for readability sake.
+    const hours = Math.floor(secsLeft / 3600); // get the number of hours from seconds
+    secsLeft = secsLeft % 3600; // get what's left after the division
+
+    const mins = Math.floor(secsLeft / 60); //take secsLeft divide into minutes
+    secsLeft = secsLeft % 60; // gets what's left after.
+    console.log(hours, mins, secsLeft);
+
 </script>
 </body>
 </html>
