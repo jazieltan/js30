@@ -7,7 +7,7 @@
 <body>
 
   <div class="hero">
-    <h1 contenteditable>🔥WOAH!</h1>
+    <h1 contenteditable>RSL</h1>
   </div>
 
   <style>
@@ -29,12 +29,39 @@
   }
 
   h1 {
-    text-shadow: 10px 10px 0 rgba(0,0,0,1);
-    font-size: 100px;
+    font-size: 200px;
+    opacity: 0.9;
   }
   </style>
 
 <script>
+  const hero = document.querySelector('.hero');
+  const text = hero.querySelector('h1');
+  const max = 10;
+
+  hero.addEventListener('mousemove', moveShadow);
+
+  function moveShadow(e){
+/*     const width = hero.offsetWidth;
+    const height = hero.offsetHeight; */
+    const {offsetWidth: width, offsetHeight: height} = hero; //ES6 destructuring
+    let {offsetX: x, offsetY: y} = e;
+
+    if (this !== e.target){
+      x = x + e.target.offsetLeft;
+      y = y + e.target.offsetTop;
+    }
+
+    const xMax = Math.round((x / width * max ) - (max / 2));
+    const yMax = Math.round((y / height * max ) - (max / 2));
+    // console.log(xMax, yMax);
+    text.style.textShadow = `
+      ${xMax}px ${yMax}px 0 rgba(0,0,0,0.7),
+      ${xMax * -1}px ${yMax * -1}px 0 rgba(255, 10, 226, 0.83),
+      ${xMax * -3}px ${yMax * -3}px 0 rgba(10, 255, 38, 0.83),
+      ${xMax * 3}px ${yMax * 3}px 0 rgba(226, 255, 10, 0.83)
+      `
+  }
 </script>
 </body>
 </html>

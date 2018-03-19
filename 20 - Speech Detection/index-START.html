@@ -12,6 +12,34 @@
 <script>
   window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+  const regconition = new SpeechRecognition();
+  regconition.interimResults = true;
+
+  let p = document.createElement('p');
+  const words = document.querySelector('.words');
+  words.appendChild(p);
+
+  regconition.addEventListener('result', e => {
+    // console.log(e.result);
+    const transscript = Array.from(e.results)
+      .map(results => results[0])
+      .map(results => results.transcript)
+      .join('')
+
+      p.textContent = transscript;
+      if (e.resutls[0].isFinal){
+        p = document.createElement('p');
+        words.appendChild(p)
+      }
+      if (transscript.include('get the weather')){
+        console.log('get the weather');
+      }
+    console.log(transscript);
+  })
+
+  regconition.addEventListener('end', regconition.start);
+
+  regconition.start();
 
 </script>
 
